@@ -7,6 +7,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -24,7 +25,7 @@ public class Chrome {
     //初始化浏览器，最大化窗口
     private void initBrowser(String platformName) {
         String windowsDriverPath = "F:\\testing\\selenium-driver\\chromedriver.exe";
-        String macosDriverPath = "";
+        String macosDriverPath = "/Users/admin/Desktop/备份/driver/chromedriver";
         String linuxDriverPath = "";
         if (platformName.equals("win")) {
             System.setProperty("webdriver.chrome.driver", windowsDriverPath);
@@ -47,6 +48,14 @@ public class Chrome {
         WebElement element = driver.findElement(By.id("nr"));
         Select select = new Select(element);
         select.selectByValue("10");
+//        select.selectByValue();
+//        select.selectByVisibleText();
+        System.out.println(select.getFirstSelectedOption().getText());
+        List<WebElement> options = select.getAllSelectedOptions();
+        for (WebElement option : options) {
+            System.out.println(option.getText());
+        }
+        System.out.println("IS multiple? " + select.isMultiple());
         driver.findElement(By.className("prefpanelgo")).click();
         driver.switchTo().alert().accept();
         Thread.sleep(5000);
@@ -96,11 +105,6 @@ public class Chrome {
         Thread.sleep(1000);
     }
 
-    //显示等待某个元素，并完成某个操作
-    private static void explicitlyWaitElementToClick(String elementString) {
-
-    }
-
     //测试对不可见的(visible)元素操作
     public void testUnvisibleElement() throws InterruptedException {
         driver.get("http://www.imooc.com");
@@ -124,6 +128,8 @@ public class Chrome {
         driver.findElement(By.xpath("//*[@id=\"header-user-card\"]/div/div/div[2]/ul/li[4]/a")).click();
         System.out.println(driver.getWindowHandle());
         Thread.sleep(3000);
+//        List<String> list = new ArrayList<>(driver.getWindowHandles());
+//        driver.switchTo().window(list.get(1));
         Set<String> handles = driver.getWindowHandles();
         for(String handle : handles) {
             if (!handle.equals(firstHandle)) {
@@ -137,30 +143,42 @@ public class Chrome {
         Thread.sleep(1000);
 //        driver.findElement(By.linkText("取消")).click();
 //        Thread.sleep(3000);
-        driver.findElement(By.id("upload")).sendKeys("F:\\图片\\头像\\1475031075752.jpg");
-        Thread.sleep(2000);
+//        driver.findElement(By.id("upload")).sendKeys("F:\\图片\\头像\\1475031075752.jpg");
+//        Thread.sleep(2000);
         driver.findElement(By.linkText("确定")).click();
         Thread.sleep(1000);
+    }
+
+    public void closeAndQuit() {
+        driver.close();
+        driver.quit();
     }
 
     public static void main(String[] args) {
         Chrome chrome = new Chrome();
         //初始化浏览器
-        chrome.initBrowser("win");
+        chrome.initBrowser("mac");
         try {
-//            chrome.testBaiduPreference();
+            chrome.testBaiduPreference();
 //            chrome.testCookie();
 //            chrome.testSearch("Selenium");
 //            chrome.testScrollToElement(driver.findElement(By.partialLinkText("亚马逊")));
-              chrome.testUnvisibleElement();
+//              chrome.testUnvisibleElement();
         } catch (InterruptedException e) {
             e.printStackTrace();
             chrome.takeScreenShot("Thread was interrupted.");
+            chrome.closeAndQuit();
+        } catch (NoSuchElementException e) {
+            e.printStackTrace();
+            chrome.takeScreenShot("This element doesn't found.");
+            chrome.closeAndQuit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            chrome.takeScreenShot("Other exceptions.");
+            chrome.closeAndQuit();
         } finally {
             System.out.println("This testing is done");
         }
-        driver.close();
-        driver.quit();
-        System.out.println("Hello");
+        chrome.closeAndQuit();
     }
 }
