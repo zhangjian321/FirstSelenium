@@ -7,7 +7,6 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -26,13 +25,17 @@ public class Chrome {
     private void initBrowser(String platformName) {
         String windowsDriverPath = "F:\\testing\\selenium-driver\\chromedriver.exe";
         String macosDriverPath = "/Users/admin/Desktop/备份/driver/chromedriver";
-        String linuxDriverPath = "";
-        if (platformName.equals("win")) {
-            System.setProperty("webdriver.chrome.driver", windowsDriverPath);
-        } else if (platformName.equals("mac")){
-            System.setProperty("webdriver.chrome.driver", macosDriverPath);
-        } else {
-            System.setProperty("webdriver.chrome.driver", linuxDriverPath);
+        String linuxDriverPath = ""; //待设置
+        switch (platformName) {
+            default:
+                System.setProperty("webdriver.chrome.driver", linuxDriverPath);
+                break;
+            case "win":
+                System.setProperty("webdriver.chrome.driver", windowsDriverPath);
+                break;
+            case "mac":
+                System.setProperty("webdriver.chrome.driver", macosDriverPath);
+                break;
         }
         driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
@@ -47,15 +50,15 @@ public class Chrome {
         Thread.sleep(2000);
         WebElement element = driver.findElement(By.id("nr"));
         Select select = new Select(element);
-        select.selectByValue("10");
+        select.selectByValue("20");
 //        select.selectByValue();
 //        select.selectByVisibleText();
         System.out.println(select.getFirstSelectedOption().getText());
-        List<WebElement> options = select.getAllSelectedOptions();
-        for (WebElement option : options) {
-            System.out.println(option.getText());
-        }
-        System.out.println("IS multiple? " + select.isMultiple());
+//        List<WebElement> options = select.getAllSelectedOptions();
+//        for (WebElement option : options) {
+//            System.out.println(option.getText());
+//        }
+//        System.out.println("IS multiple? " + select.isMultiple());
         driver.findElement(By.className("prefpanelgo")).click();
         driver.switchTo().alert().accept();
         Thread.sleep(5000);
